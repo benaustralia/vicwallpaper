@@ -92,14 +92,10 @@ const AuditPage: NextPage<{ rows: Row[] }> = ({ rows }) => {
           Museum-links audit
         </h1>
         <p className="mt-1 text-sm text-white/60">
-          Tap a title to open the museum page in a new tab. Tap ✓ if it loads a
-          real Smithsonian / Met page, ✗ if it 404s or stays stuck on CF.
+          Tap a title to open the museum page in this tab. Use the back button
+          (or edge-swipe) to return. Tap ✓ if the page loaded a real
+          Smithsonian / Met record, ✗ if it 404s or stays stuck on CF.
           Progress is saved on this device.
-        </p>
-        <p className="mt-1 text-xs text-white/40">
-          On iOS Safari, this audit tab may get evicted while you're on the
-          museum page — closing the museum tab can lose this one. Don't worry:
-          your marks are saved automatically, just re-open this URL to resume.
         </p>
         {storageError && (
           <p className="mt-2 rounded bg-rose-500/15 px-3 py-2 text-sm text-rose-300">
@@ -167,7 +163,6 @@ const AuditPage: NextPage<{ rows: Row[] }> = ({ rows }) => {
                 <div className="min-w-0 flex-1">
                   <a
                     href={r.objectUrl}
-                    target="_blank"
                     rel="noopener noreferrer"
                     className="block text-sm font-medium leading-tight text-sky-300 underline-offset-2 hover:underline"
                   >
