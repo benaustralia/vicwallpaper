@@ -96,6 +96,11 @@ const AuditPage: NextPage<{ rows: Row[] }> = ({ rows }) => {
           real Smithsonian / Met page, ✗ if it 404s or stays stuck on CF.
           Progress is saved on this device.
         </p>
+        <p className="mt-1 text-xs text-white/40">
+          On iOS Safari, this audit tab may get evicted while you're on the
+          museum page — closing the museum tab can lose this one. Don't worry:
+          your marks are saved automatically, just re-open this URL to resume.
+        </p>
         {storageError && (
           <p className="mt-2 rounded bg-rose-500/15 px-3 py-2 text-sm text-rose-300">
             ⚠ {storageError}
@@ -144,7 +149,7 @@ const AuditPage: NextPage<{ rows: Row[] }> = ({ rows }) => {
             return (
               <li
                 key={r.id}
-                className={`flex items-start gap-3 rounded-lg border border-white/5 p-2 ${
+                className={`flex items-stretch gap-3 rounded-xl border border-white/5 p-3 ${
                   m === "ok"
                     ? "bg-emerald-500/5 border-emerald-500/30"
                     : m === "bad"
@@ -155,7 +160,7 @@ const AuditPage: NextPage<{ rows: Row[] }> = ({ rows }) => {
                 <img
                   src={r.thumbUrl}
                   alt=""
-                  className="h-14 w-14 flex-none rounded object-cover bg-black/40"
+                  className="h-16 w-16 flex-none self-center rounded object-cover bg-black/40"
                   loading="lazy"
                   decoding="async"
                 />
@@ -172,13 +177,13 @@ const AuditPage: NextPage<{ rows: Row[] }> = ({ rows }) => {
                     [{r.id}] {r.source} · {r.date}
                   </p>
                 </div>
-                <div className="flex flex-none flex-col gap-1">
+                <div className="flex flex-none flex-col gap-2">
                   <button
                     onClick={() => setMark(r.id, "ok")}
-                    className={`h-8 w-9 rounded text-sm ${
+                    className={`h-14 w-14 touch-manipulation rounded-lg text-2xl font-semibold active:scale-95 transition ${
                       m === "ok"
                         ? "bg-emerald-500 text-black"
-                        : "bg-white/10 text-emerald-300"
+                        : "bg-white/10 text-emerald-300 hover:bg-white/15"
                     }`}
                     aria-label="works"
                   >
@@ -186,10 +191,10 @@ const AuditPage: NextPage<{ rows: Row[] }> = ({ rows }) => {
                   </button>
                   <button
                     onClick={() => setMark(r.id, "bad")}
-                    className={`h-8 w-9 rounded text-sm ${
+                    className={`h-14 w-14 touch-manipulation rounded-lg text-2xl font-semibold active:scale-95 transition ${
                       m === "bad"
                         ? "bg-rose-500 text-black"
-                        : "bg-white/10 text-rose-300"
+                        : "bg-white/10 text-rose-300 hover:bg-white/15"
                     }`}
                     aria-label="broken"
                   >
