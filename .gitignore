@@ -38,3 +38,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local env (token from `vercel env pull`)
+.env*.local
+audit-report.json
+test-results
+playwright-report
+.playwright-mcp

@@ -1,6 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Custom screens (raw media queries) — Tailwind v4 uses @custom-variant. */
+@custom-variant narrow (@media (max-aspect-ratio: 3 / 2));
+@custom-variant wide (@media (min-aspect-ratio: 3 / 2));
+@custom-variant taller-than-854 (@media (min-height: 854px));
+
+@theme {
+  /* Custom shadow used by the masonry tile inner border */
+  --shadow-highlight: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
 
 @supports (font: -apple-system-body) and (-webkit-appearance: none) {
   img[loading="lazy"] {

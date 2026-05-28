@@ -13,7 +13,7 @@ const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
   return (
     <>
       <Head>
-        <title>Next.js Conf 2022 Photos</title>
+        <title>{`${currentPhoto.title} — vicwallpaper`}</title>
         <meta property="og:image" content={currentPhoto.url} />
         <meta name="twitter:image" content={currentPhoto.url} />
       </Head>

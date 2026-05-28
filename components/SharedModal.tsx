@@ -6,7 +6,7 @@ import {
   ChevronRightIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { AnimatePresence, motion, MotionConfig } from "framer-motion";
+import { AnimatePresence, motion, MotionConfig } from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
 import { useSwipeable } from "react-swipeable";
@@ -14,7 +14,6 @@ import { variants } from "../utils/animationVariants";
 import downloadPhoto from "../utils/downloadPhoto";
 import { range } from "../utils/range";
 import type { ImageProps, SharedModalProps } from "../utils/types";
-import Twitter from "./Icons/Twitter";
 
 export default function SharedModal({
   index,
@@ -55,12 +54,12 @@ export default function SharedModal({
       }}
     >
       <div
-        className="relative z-50 flex aspect-[3/2] w-full max-w-7xl items-center wide:h-full xl:taller-than-854:h-auto"
+        className="relative z-50 flex aspect-3/2 w-full max-w-7xl items-center wide:h-full xl:taller-than-854:h-auto"
         {...handlers}
       >
         {/* Main image */}
         <div className="w-full overflow-hidden">
-          <div className="relative flex aspect-[3/2] items-center justify-center">
+          <div className="relative flex aspect-3/2 items-center justify-center">
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
                 key={index}
@@ -69,14 +68,15 @@ export default function SharedModal({
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="absolute"
+                className="absolute inset-0 flex items-center justify-center"
               >
                 <Image
                   src={currentImage.url}
-                  width={navigation ? 1280 : 1920}
-                  height={navigation ? 853 : 1280}
+                  width={currentImage.width || 1280}
+                  height={currentImage.height || 853}
                   priority
-                  alt="Next.js Conf image"
+                  className="max-h-full max-w-full w-auto h-auto object-contain"
+                  alt={currentImage.title}
                   onLoad={() => setLoaded(true)}
                 />
               </motion.div>
@@ -88,7 +88,7 @@ export default function SharedModal({
         <div className="absolute inset-0 mx-auto flex max-w-7xl items-center justify-center">
           {/* Buttons */}
           {loaded && (
-            <div className="relative aspect-[3/2] max-h-full w-full">
+            <div className="relative aspect-3/2 max-h-full w-full">
               {navigation && (
                 <>
                   {index > 0 && (
@@ -112,33 +112,21 @@ export default function SharedModal({
                 </>
               )}
               <div className="absolute top-0 right-0 flex items-center gap-2 p-3 text-white">
-                {navigation ? (
-                  <a
-                    href={currentImage.url}
-                    className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
-                    target="_blank"
-                    title="Open fullsize version"
-                    rel="noreferrer"
-                  >
-                    <ArrowTopRightOnSquareIcon className="h-5 w-5" />
-                  </a>
-                ) : (
-                  <a
-                    href={`https://twitter.com/intent/tweet?text=Check%20out%20this%20pic%20from%20Next.js%20Conf!%0A%0Ahttps://nextjsconf-pics.vercel.app/p/${index}`}
-                    className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
-                    target="_blank"
-                    title="Open fullsize version"
-                    rel="noreferrer"
-                  >
-                    <Twitter className="h-5 w-5" />
-                  </a>
-                )}
+                <a
+                  href={currentImage.url}
+                  className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
+                  target="_blank"
+                  title="Open full-size image"
+                  rel="noreferrer"
+                >
+                  <ArrowTopRightOnSquareIcon className="h-5 w-5" />
+                </a>
                 <button
                   onClick={() =>
-                    downloadPhoto(currentImage.url, `${index}.jpg`)
+                    downloadPhoto(currentImage.url, `${currentImage.title}.jpg`)
                   }
                   className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
-                  title="Download fullsize version"
+                  title="Download full-size image"
                 >
                   <ArrowDownTrayIcon className="h-5 w-5" />
                 </button>
@@ -157,12 +145,55 @@ export default function SharedModal({
               </div>
             </div>
           )}
+
+          {/* Catalogue metadata caption */}
+          <figcaption
+            className={`pointer-events-none absolute inset-x-0 bottom-0 z-40 flex flex-col gap-1 bg-linear-to-t from-black/90 via-black/65 to-transparent px-5 pt-20 text-white sm:px-8 ${
+              navigation ? "pb-28" : "pb-8"
+            }`}
+          >
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-white/60">
+              {currentImage.source}
+              {currentImage.licence ? ` · ${currentImage.licence}` : ""}
+            </p>
+            <h2 className="max-w-3xl font-serif text-xl font-semibold leading-tight sm:text-2xl">
+              {currentImage.title}
+            </h2>
+            <p className="text-sm italic text-white/80">
+              {currentImage.date}
+              {currentImage.dateApproximate ? " (approx.)" : ""}
+              {currentImage.country ? ` · ${currentImage.country}` : ""}
+            </p>
+            <div className="mt-1 max-w-3xl space-y-0.5 text-sm text-white/70">
+              {currentImage.medium && <p>{currentImage.medium}</p>}
+              {currentImage.maker && (
+                <p>
+                  <span className="text-white/45">Maker — </span>
+                  {currentImage.maker}
+                </p>
+              )}
+              {currentImage.creditLine && (
+                <p className="text-white/55">{currentImage.creditLine}</p>
+              )}
+            </div>
+            {currentImage.objectUrl && (
+              <a
+                href={currentImage.objectUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="pointer-events-auto mt-2 inline-block w-fit text-xs font-semibold uppercase tracking-[0.15em] text-white/80 underline-offset-4 hover:text-white hover:underline"
+              >
+                View in museum collection →
+              </a>
+            )}
+          </figcaption>
+
           {/* Bottom Nav bar */}
           {navigation && (
-            <div className="fixed inset-x-0 bottom-0 z-40 overflow-hidden bg-gradient-to-b from-black/0 to-black/60">
+            <div className="fixed inset-x-0 bottom-0 z-40 overflow-hidden bg-linear-to-b from-black/0 to-black/60">
               <motion.div
                 initial={false}
-                className="mx-auto mt-6 mb-6 flex aspect-[3/2] h-14"
+                className="mx-auto mt-6 mb-6 flex aspect-3/2 h-14"
               >
                 <AnimatePresence initial={false}>
                   {filteredImages.map(({ url, id }) => (
@@ -188,7 +219,7 @@ export default function SharedModal({
                       } relative inline-block w-full shrink-0 transform-gpu overflow-hidden focus:outline-none`}
                     >
                       <Image
-                        alt="small photos on the bottom"
+                        alt="thumbnail"
                         width={180}
                         height={120}
                         className={`${
