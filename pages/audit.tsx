@@ -153,25 +153,28 @@ const AuditPage: NextPage<{ rows: Row[] }> = ({ rows }) => {
                     : "bg-white/5"
                 }`}
               >
-                <img
-                  src={r.thumbUrl}
-                  alt=""
-                  className="h-16 w-16 flex-none self-center rounded object-cover bg-black/40"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="min-w-0 flex-1">
-                  <a
-                    href={r.objectUrl}
-                    rel="noopener noreferrer"
-                    className="block text-sm font-medium leading-tight text-sky-300 underline-offset-2 hover:underline"
-                  >
-                    {r.title}
-                  </a>
-                  <p className="mt-0.5 text-xs text-white/50">
-                    [{r.id}] {r.source} · {r.date}
-                  </p>
-                </div>
+                {/* Image + text are one big tap target opening the museum page. */}
+                <a
+                  href={r.objectUrl}
+                  rel="noopener noreferrer"
+                  className="-m-3 mr-0 flex min-w-0 flex-1 items-center gap-3 rounded-l-xl p-3 touch-manipulation active:bg-white/10"
+                >
+                  <img
+                    src={r.thumbUrl}
+                    alt=""
+                    className="h-16 w-16 flex-none rounded object-cover bg-black/40"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-medium leading-tight text-sky-300">
+                      {r.title}
+                    </div>
+                    <p className="mt-0.5 text-xs text-white/50">
+                      [{r.id}] {r.source} · {r.date}
+                    </p>
+                  </div>
+                </a>
                 <div className="flex flex-none flex-col gap-2">
                   <button
                     onClick={() => setMark(r.id, "ok")}
