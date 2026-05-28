@@ -19,24 +19,38 @@ const AuditPage: NextPage<{ rows: Row[] }> = ({ rows }) => {
   // Per-row state: undefined | "ok" | "bad", saved to localStorage so you
   // can stop and resume on the same device.
   const [marks, setMarks] = useState<Record<number, "ok" | "bad">>({});
+  const [hydrated, setHydrated] = useState(false);
+  const [storageError, setStorageError] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "unmarked" | "ok" | "bad">(
     "unmarked",
   );
 
-  // hydrate from localStorage
+  // Hydrate from localStorage on mount. The `hydrated` flag gates the persist
+  // effect below — otherwise that effect would run on initial render with
+  // marks={} and clobber the saved state before we'd had time to read it.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setMarks(JSON.parse(raw));
-    } catch {}
+    } catch (e) {
+      setStorageError(
+        "Couldn't read saved marks (localStorage blocked — Private Browsing?).",
+      );
+    }
+    setHydrated(true);
   }, []);
 
-  // persist
+  // Persist — only after hydration completes
   useEffect(() => {
+    if (!hydrated) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(marks));
-    } catch {}
-  }, [marks]);
+    } catch (e) {
+      setStorageError(
+        "Couldn't save marks (localStorage blocked — Private Browsing?).",
+      );
+    }
+  }, [marks, hydrated]);
 
   const counts = useMemo(() => {
     const ok = Object.values(marks).filter((m) => m === "ok").length;
@@ -82,6 +96,11 @@ const AuditPage: NextPage<{ rows: Row[] }> = ({ rows }) => {
           real Smithsonian / Met page, ✗ if it 404s or stays stuck on CF.
           Progress is saved on this device.
         </p>
+        {storageError && (
+          <p className="mt-2 rounded bg-rose-500/15 px-3 py-2 text-sm text-rose-300">
+            ⚠ {storageError}
+          </p>
+        )}
 
         <div className="sticky top-0 z-10 -mx-3 mt-4 border-b border-white/10 bg-black/85 px-3 py-3 backdrop-blur">
           <div className="flex items-center justify-between gap-2 text-sm">
