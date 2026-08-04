@@ -57,13 +57,11 @@ test.describe("vicwallpaper gallery", () => {
     await expect(museumLink).toHaveAttribute("href", m.object_url);
   });
 
-  test("Cloudinary delivers the optimised image (HTTP 200, image/*)", async ({
-    page,
-  }) => {
+  test("R2 delivers the image (HTTP 200, image/*)", async ({ page }) => {
     const responses: { url: string; status: number; type: string | null }[] =
       [];
     page.on("response", (resp) => {
-      if (resp.url().includes("res.cloudinary.com")) {
+      if (resp.url().includes(".r2.dev/") || resp.url().includes("/_next/image")) {
         responses.push({
           url: resp.url(),
           status: resp.status(),
@@ -79,10 +77,6 @@ test.describe("vicwallpaper gallery", () => {
     for (const r of responses) {
       expect(r.status, `${r.url} status`).toBe(200);
     }
-    // The main delivery URL contains a Cloudinary transformation
-    expect(
-      responses.some((r) => /\/upload\/f_auto,q_/.test(r.url)),
-    ).toBeTruthy();
   });
 
   test("opening the in-page modal from a tile + Right arrow advances the plate", async ({
@@ -121,10 +115,10 @@ test.describe("vicwallpaper gallery", () => {
     await expect(page).toHaveURL(/\/\?photoId=1$/);
   });
 
-  test("every manifest record has a non-empty Cloudinary URL", async () => {
+  test("every manifest record has a non-empty R2 URL", async () => {
     for (const m of manifest) {
-      expect(m.cloudinary_url, `record ${m.object_id}`).toMatch(
-        /^https:\/\/res\.cloudinary\.com\/.+\/upload\//,
+      expect(m.r2_url, `record ${m.object_id}`).toMatch(
+        /^https:\/\/pub-[a-f0-9]+\.r2\.dev\/images\//,
       );
     }
   });

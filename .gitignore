@@ -45,3 +45,7 @@ audit-report.json
 test-results
 playwright-report
 .playwright-mcp
+
+# R2 upload staging (compressed masters produced by scripts/prep-r2-images.py;
+# kept locally only, re-derivable from ~/Documents/wallpapers-1850s sources)
+/scripts/r2_images
